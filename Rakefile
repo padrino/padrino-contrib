@@ -1,6 +1,12 @@
 require 'rubygems/specification' unless defined?(Gem::Specification)
 require 'rake' unless defined?(Rake)
 
+# Runs the sh command with sudo if the rake command is run with sudo
+def sudo_sh(command)
+  command = `whoami`.strip! != "root" ? "sudo #{command}" : command
+  sh command
+end
+
 # Returns the gem specification object for a gem
 def gemspec
   @gemspec ||= begin
@@ -26,6 +32,11 @@ end
 desc "Installs the gem locally"
 task :install => :package do
   sudo_sh "gem install pkg/#{gemspec.name}-#{gemspec.version}"
+end
+
+desc "Uninstalls the gem locally"
+task :uninstall do
+  sudo_sh "gem uninstall padrino-contrib -v #{gemspec.version}"
 end
 
 desc "Release the gem"

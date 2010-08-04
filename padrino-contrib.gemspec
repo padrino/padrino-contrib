@@ -15,5 +15,4 @@ Gem::Specification.new do |s|
   s.files = %w(LICENSE README.rdoc Rakefile padrino-contrib.gemspec) + Dir.glob("{bin,lib,test}/**/*")
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_path = "lib"
-  s.add_dependency("padrino-core", ">= 0.9.14")
 end
