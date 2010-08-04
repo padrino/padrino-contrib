@@ -1,0 +1,49 @@
+require 'rubygems/specification' unless defined?(Gem::Specification)
+require 'rake' unless defined?(Rake)
+
+# Returns the gem specification object for a gem
+def gemspec
+  @gemspec ||= begin
+    ::Gem::Specification.load("padrino-contrib.gemspec")
+  end
+end
+
+# Most notable functions are:
+#   $ rake package # packages the gem into the pkg folder
+#   $ rake install # installs the gem into system
+#   $ rake release # publishes gem to rubygems
+
+desc "Validates the gemspec"
+task :gemspec do
+  gemspec.validate
+end
+
+desc "Displays the current version"
+task :version do
+  puts "Current version: #{gemspec.version}"
+end
+
+desc "Installs the gem locally"
+task :install => :package do
+  sudo_sh "gem install pkg/#{gemspec.name}-#{gemspec.version}"
+end
+
+desc "Release the gem"
+task :release => :package do
+  sh "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
+end
+
+# rake package
+begin
+  require 'rake/gempackagetask'
+rescue LoadError
+  task(:gem) { $stderr.puts '`gem install rake` to package gems' }
+else
+  Rake::GemPackageTask.new(gemspec) do |pkg|
+    pkg.gem_spec = gemspec
+  end
+  task :gem => :gemspec
+end
+
+task :package => :gemspec
+task :default => :install
