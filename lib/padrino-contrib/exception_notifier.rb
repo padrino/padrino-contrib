@@ -11,8 +11,8 @@
 #     set :exceptions_page,    :errors # => views/errors.haml/erb
 #     set :redmine, :project => "My Bugs", :tracker => "Bugs", :priority => "High"
 #     # Uncomment this for test in development
-#     #  disable :raise_errors
-#     #  disable :show_exceptions
+#     # disable :raise_errors
+#     # disable :show_exceptions
 #   end
 #
 module Padrino

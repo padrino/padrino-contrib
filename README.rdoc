@@ -8,6 +8,8 @@ This package includes a variety of add-on components for Padrino Framework:
 *   orm_ar_translate       - Translate for you your ActiveRecord columns
 *   auto_locale            - Switch for you automatically the I18n.locale
 *   flash_session          - Middleware that help you in passing your session in the URI, when it should be in the cookie.
+*   orm_mm_permalink       - Generate permalink for a specified column on MongoMapper
+*   orm_mm_search          - Full text search in MongoMapper in specified columns
 
 === Use
 
