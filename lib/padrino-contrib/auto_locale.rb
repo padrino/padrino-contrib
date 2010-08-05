@@ -27,7 +27,7 @@ module Padrino
       end # Helpers
 
       def self.registered(app)
-        app.helpers AutoLocale::Helpers
+        app.helpers Padrino::Contrib::AutoLocale::Helpers
         app.set :locales, [:en]
         app.before do
           if request.path_info =~ /^\/(#{options.locales.join('|')})\/?/

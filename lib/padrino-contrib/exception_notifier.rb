@@ -33,20 +33,20 @@ module Padrino
           params.each { |k,v| body += "\n#{k.inspect} => #{v.inspect}" }
           logger.error body
           settings.redmine.each { |k,v| body += "\n#{k.to_s.capitalize}: #{v}" }
-          settings.email do
-            subject "[#{options.exceptions_subject}] #{boom.class} - #{boom.message}"
-            to options.exceptions_to
-            from options.exceptions_from
+          app.email do
+            subject "[#{app.exceptions_subject}] #{boom.class} - #{boom.message}"
+            to app.exceptions_to
+            from app.exceptions_from
             body body
           end
           response.status = 500
           content_type 'text/html', :charset => "utf-8"
-          render options.exceptions_page
+          render settings.exceptions_page
         end
         app.error 404 do
           response.status = 404
           content_type 'text/html', :charset => "utf-8"
-          render options.exceptions_page
+          render settings.exceptions_page
         end
       end # self.registered
     end # ExceptionNotifier
