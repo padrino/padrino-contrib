@@ -30,7 +30,7 @@ module Padrino
 
           module InstanceMethods
             def method_missing(method_name, *arguments)
-              attribute = "\#{method_name}_\#{I18n.locale}".to_sym
+              attribute = "#{method_name}_#{I18n.locale}".to_sym
               return self.send(attribute) if I18n.locale.present? && self.respond_to?(attribute)
               super
             end

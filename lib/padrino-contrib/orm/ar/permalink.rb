@@ -31,7 +31,7 @@ module Padrino
             protected
               def generate_permalink
                 self.permalink = read_attribute(permalink_field).downcase.
-                                                                 gsub(/\\W/, '-').
+                                                                 gsub(/\W/, '-').
                                                                  gsub(/-+/, '-').
                                                                  gsub(/-$/, '').
                                                                  gsub(/^-/, '')
