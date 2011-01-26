@@ -23,8 +23,8 @@ module Padrino
 
             def search(text, options={})
               if text
-                re = Regexp.new(Regexp.escape(text), 'i').to_json
-                where = search_fields.map { |field| "this.#{field}.match(#{re})" }.join(" || ")
+                re    = Regexp.new(Regexp.escape(text), 'i')
+                where = search_fields.map { |field| "this.#{field}.match(#{re.inspect})" }.join(" || ")
                 options.merge!("$where" => where)
               end
               options.delete(:paginate) ? paginate(options) : all(options)
