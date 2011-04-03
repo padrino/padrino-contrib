@@ -6,7 +6,7 @@
 #
 module Padrino
   module Contrib
-    VERSION = '0.0.3' unless defined?(Padrino::Contrib::VERSION)
+    VERSION = '0.0.4' unless defined?(Padrino::Contrib::VERSION)
     ##
     # Return the current Padrino version
     #

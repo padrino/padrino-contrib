@@ -11,7 +11,7 @@ module Padrino
     #
     # ==== Usage
     #
-    #  use FlashSessionMiddleware, session_id
+    #  use Padrino::Contrib::FlashSession, settings.session_id
     #
     class FlashSession
       def initialize(app, session_key = 'session_id')
