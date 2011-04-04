@@ -14,9 +14,10 @@ module Padrino
         #   end
         #
         module Permalink
+          extend ActiveSupport::Concern
+
           module ClassMethods
             def has_permalink(field)
-              include InstanceMethods
               class_inheritable_accessor  :permalink_field
               write_inheritable_attribute :permalink_field, field
               before_save :generate_permalink
@@ -47,4 +48,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-MongoMapper::Document.append_extensions(Padrino::Contrib::Orm::Mm::Permalink::ClassMethods)
+MongoMapper::Document.send(:include, Padrino::Contrib::Orm::Mm::Permalink)

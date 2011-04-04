@@ -2,19 +2,21 @@ module Padrino
   module Contrib
     module Orm
       module Mm
+        ##
+        # This module provides full text search in specified fileds with pagination support.
+        #
+        # == Examples
+        #
+        #   # model.rb
+        #   has_search  :title, :body
+        #
+        #   # controller.rb
+        #   Model.search("some thing")
+        #   Model.search("some thing", :order => "position", :page => (params[:page] || 1), :draft => false, :paginate => true)
+        #
         module Search
-          ##
-          # This module provides full text search in specified fileds with pagination support.
-          #
-          # == Examples
-          #
-          #   # model.rb
-          #   has_search  :title, :body
-          #
-          #   # controller.rb
-          #   Model.search("some thing")
-          #   Model.search("some thing", :order => "position", :page => (params[:page] || 1), :draft => false, :paginate => true)
-          #
+          extend ActiveSupport::Concern
+
           module ClassMethods
             def has_search(*fields)
               class_inheritable_accessor  :search_fields
@@ -35,4 +37,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-MongoMapper::Document.append_extensions(Padrino::Contrib::Orm::Mm::Search::ClassMethods)
+MongoMapper::Document.send(:include, Padrino::Contrib::Orm::Mm::Search)
