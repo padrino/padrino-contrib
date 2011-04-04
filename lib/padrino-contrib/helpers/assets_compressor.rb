@@ -20,7 +20,8 @@ module Padrino
       module AssetsCompressor
         def self.registered(app)
           raise "You need to add in your Gemfile: gem 'yui-compressor', :require => 'yui/compressor'" unless defined?(YUI)
-          app.helpers Padrino::Contrib::Helpers::AssetsCompressor::Helpers
+          app.helpers Padrino::Contrib::Helpers::AssetsCompressor::Helpers unless app.respond_to?(:compressor)
+          app.set :compressor, {}
         end
 
         module Helpers
@@ -38,16 +39,15 @@ module Padrino
           end
 
           def assets_compressor(kind, sources)
-            began_at = Time.now
-            asset_folder, compressor = *case kind
-              # 8000 for line break is more browser and texmate friendly
-              when :css then ['stylesheets', YUI::CssCompressor.new(:line_break => 8000)]
-              when :js  then ['javascripts', YUI::JavaScriptCompressor.new(:line_break => 8000)]
-              else raise "YUI Compressor didn't support yet #{kind} compression"
-            end
             options = sources.extract_options!.symbolize_keys
             bundle  = options.delete(:cache)
             return sources if bundle.nil?
+            began_at = Time.now
+            asset_folder = case kind
+              when :css then 'stylesheets'
+              when :js  then 'javascripts'
+              else raise "YUI Compressor didn't support yet #{kind} compression"
+            end
             bundle  = settings.app_name if bundle.is_a?(TrueClass)
             path    = Padrino.root("public", uri_root_path(asset_folder, bundle.to_s))
             path   += ".#{kind}" unless path =~ /\.#{kind}/
@@ -64,8 +64,10 @@ module Padrino
               end
               source
             end
+            settings.compressor[:css] ||= YUI::CssCompressor.new(:line_break => 8000)
+            settings.compressor[:js]  ||= YUI::JavaScriptCompressor.new(:line_break => 8000)
             Dir.mkdir(File.dirname(path)) unless File.exist?(File.dirname(path))
-            File.open(path, "w") { |f| f.write(compressor.compress(sources.join("\n"))) }
+            File.open(path, "w") { |f| f.write(settings.compressor[kind].compress(sources.join("\n"))) }
             logger.debug "Compressed (%0.2fms) %s" % [Time.now-began_at, path] if defined?(logger)
             bundle
           end
