@@ -9,7 +9,7 @@ module Padrino
       # ==== Usage
       #
       #   # in your app.rb
-      #   use Padrino::Contrib::Helpers::AssetsCompressor
+      #   register Padrino::Contrib::Helpers::AssetsCompressor
       #
       #   # in yours layouts/views
       #   =stylesheet_link_tag "grid", "base", "fancybox", "gallery", :cache => "bundle/lipsiasample"
