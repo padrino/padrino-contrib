@@ -12,8 +12,8 @@ module Padrino
       #   register Padrino::Contrib::Helpers::AssetsCompressor
       #
       #   # in yours layouts/views
-      #   =stylesheet_link_tag "grid", "base", "fancybox", "gallery", :cache => "bundle/lipsiasample"
-      #   =javascript_include_tag "jquery", "gallery", "fancybox", "base", :cache => "bundle/lipsiasample"
+      #   =stylesheet_link_tag "grid", "base", "fancybox", "gallery", :cache => "bundle/sample"
+      #   =javascript_include_tag "jquery", "gallery", "fancybox", "base", :cache => "bundle/sample"
       #   =stylesheet_link_tag "grid", "base", "fancybox", "gallery", :cache => true
       #   =javascript_include_tag "jquery", "gallery", "fancybox", "base", :cache => true
       #
