@@ -21,8 +21,8 @@ In your Padrino project edit:
 
   # boot.rb
   require 'padrino-contrib/exception_notifier'
-  # require 'padrino-contrib/orm/ar/permalink'
-  # require 'padrino-contrib/orm/ar/textile'
+  # require 'padrino-contrib/orm/active_record/permalink'
+  # require 'padrino-contrib/orm/active_record/textile'
 
   Padrino.load! # Remember to add contribs before that line!
 

@@ -1,7 +1,7 @@
 module Padrino
   module Contrib
     module Orm
-      module Mm
+      module MongoMapper
         ##
         # This module provides full text search in specified fileds with pagination support.
         #
@@ -37,4 +37,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-MongoMapper::Document.send(:include, Padrino::Contrib::Orm::Mm::Search)
+::MongoMapper::Document.send(:include, Padrino::Contrib::Orm::MongoMapper::Search)

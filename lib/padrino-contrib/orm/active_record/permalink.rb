@@ -1,7 +1,7 @@
 module Padrino
   module Contrib
     module Orm
-      module Ar
+      module ActiveRecord
         ##
         # This module extend ActiveRecord.
         #
@@ -42,4 +42,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-ActiveRecord::Base.extend(Padrino::Contrib::Orm::Ar::Permalink::ClassMethods)
+::ActiveRecord::Base.extend(Padrino::Contrib::Orm::ActiveRecord::Permalink::ClassMethods)

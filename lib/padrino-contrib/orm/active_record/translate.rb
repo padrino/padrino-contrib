@@ -1,7 +1,7 @@
 module Padrino
   module Contrib
     module Orm
-      module Ar
+      module ActiveRecord
         ##
         # This is an extension for ActiveRecord where if I had:
         #
@@ -40,4 +40,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-ActiveRecord::Base.extend(Padrino::Contrib::Orm::Ar::Translate::ClassMethods)
+::ActiveRecord::Base.extend(Padrino::Contrib::Orm::ActiveRecord::Translate::ClassMethods)

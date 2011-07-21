@@ -1,7 +1,7 @@
 module Padrino
   module Contrib
     module Orm
-      module Mm
+      module MongoMapper
         ##
         # This module extend ActiveRecord.
         #
@@ -48,4 +48,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-MongoMapper::Document.send(:include, Padrino::Contrib::Orm::Mm::Permalink)
+::MongoMapper::Document.send(:include, Padrino::Contrib::Orm::MongoMapper::Permalink)

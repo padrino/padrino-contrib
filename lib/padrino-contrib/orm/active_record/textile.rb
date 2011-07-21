@@ -3,7 +3,7 @@ require 'RedCloth'
 module Padrino
   module Contrib
     module Orm
-      module Ar
+      module ActiveRecord
         ##
         # This module generate html from textile.
         #
@@ -50,4 +50,4 @@ module Padrino
     end # Orm
   end # Contrib
 end # Padrino
-ActiveRecord::Base.extend(Padrino::Contrib::Orm::Ar::Textile::ClassMethods)
+::ActiveRecord::Base.extend(Padrino::Contrib::Orm::ActiveRecord::Textile::ClassMethods)

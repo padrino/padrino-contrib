@@ -14,6 +14,11 @@ module Padrino
     #  use Padrino::Contrib::FlashSession, settings.session_id
     #
     class FlashSession
+
+      def self.registered(app)
+        app.use Padrino::Contrib::FlashSession, app.session_id
+      end
+
       def initialize(app, session_key = 'session_id')
         @app = app
         @session_key = session_key.to_s
