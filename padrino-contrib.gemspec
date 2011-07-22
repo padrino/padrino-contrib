@@ -5,7 +5,7 @@ require "padrino-contrib/version"
 Gem::Specification.new do |s|
   s.name        = "padrino-contrib"
   s.version     = Padrino::Contrib::VERSION
-  s.authors     = ["Davide D'Agostino", "Nathan Esquenazi", , "Arthur Chiu"]
+  s.authors     = ["Davide D'Agostino", "Nathan Esquenazi", "Arthur Chiu"]
   s.email       = "padrinorb@gmail.com"
   s.summary     = "Contributed plugins and utilities for Padrino Framework"
   s.homepage    = "http://www.padrinorb.com"
