@@ -11,7 +11,7 @@ end
 desc "Bump version on github"
 task :bump do
   if `git status -s`.chomp!
-    puts "\e[1mNothing to commit (working directory clean)\e[0m"
+    puts "\e[31mNothing to commit (working directory clean)\e[0m"
     version  = Bundler.load_gemspec(Dir[File.expand_path('../*.gemspec', __FILE__)].first).version
     sh "git add .; git commit -m \"Bump to version #{version}\""
   end
