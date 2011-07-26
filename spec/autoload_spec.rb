@@ -13,7 +13,8 @@ describe 'Autoload' do
                  gsub(/\/|-/, "::").
                  gsub(/_(.)/) { $1.upcase }.
                  gsub(/::(.)/) { "::" + $1.upcase }.
-                 gsub(/version/i, 'VERSION') # this is a constant
+                 gsub(/version/i, 'VERSION'). # this is a constant
+                 gsub(/Jquery/, 'JQuery')
 
     it(klass) { eval("#{klass}").should be_true }
   end
