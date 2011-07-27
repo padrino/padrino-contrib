@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'fileutils'
 
 module Padrino
   module Contrib
@@ -96,10 +97,20 @@ module Padrino
             # Back if no changes happens
             return bundle if File.exist?(path)
 
+            # Clean old cached files
+            Dir[path.gsub(/\.\d{10}\.#{kind}/, "*")].each { |file| FileUtils.rm_f(file) }
+
             # Get source code
+            errors = []
             code = sources.map do |source|
               source = asset_path(kind, source).sub(/\?\d{10}$/, '') # Removes Timestamp
-              source = source =~ /^http/ ? open(source) : File.read(Padrino.root("public", source))
+              begin
+                source = source =~ /^http/ ? open(source) : File.read(Padrino.root("public", source))
+              rescue Exception => e
+                logger.error e.message
+                errors << source
+                next
+              end
               # Removes extra comments
               if cs = source =~ /\/\*\!/
                 cr = source.slice(cs, source.length)
@@ -116,7 +127,7 @@ module Padrino
             logger.debug "Compressed (%0.2fms) %s" % [Time.now-began_at, path] if defined?(logger)
 
             # Return the updated bundle
-            bundle
+            errors.unshift bundle
           end
 
           def asset_path_with_compression(kind, source)
