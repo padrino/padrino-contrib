@@ -35,6 +35,7 @@ module Padrino
             I18n.locale = $1.to_sym
           else
             I18n.locale = options.locales[0]
+            not_found if request.path_info !~ /^\/?$/
           end
         end
 
