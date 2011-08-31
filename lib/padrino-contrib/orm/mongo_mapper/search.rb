@@ -19,14 +19,13 @@ module Padrino
 
           module ClassMethods
             def has_search(*fields)
-              class_inheritable_accessor  :search_fields
-              write_inheritable_attribute :search_fields, fields
+              @_search_fields = fields
             end
 
             def search(text, options={})
               if text
                 re    = Regexp.new(Regexp.escape(text), 'i')
-                where = search_fields.map { |field| "this.#{field}.match(#{re.inspect})" }.join(" || ")
+                where = @_search_fields.map { |field| "this.#{field}.match(#{re.inspect})" }.join(" || ")
                 options.merge!("$where" => where)
               end
               options.delete(:paginate) ? paginate(options) : all(options)

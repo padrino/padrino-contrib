@@ -18,8 +18,7 @@ module Padrino
 
           module ClassMethods
             def has_permalink(field)
-              class_inheritable_accessor  :permalink_field
-              write_inheritable_attribute :permalink_field, field
+              @_permalink_field = field
               before_save :generate_permalink
               validates_uniqueness_of field
               key :permalink, String
@@ -31,6 +30,10 @@ module Padrino
                             gsub(/-$/, '').
                             gsub(/^-/, '')
             end
+
+            def permalink_field
+              @_permalink_field
+            end
           end
 
           module InstanceMethods
@@ -40,7 +43,7 @@ module Padrino
 
             protected
               def generate_permalink
-                self.permalink = self.class.permalink_for(self[permalink_field])
+                self.permalink = self.class.permalink_for(self[self.class.permalink_field])
               end
           end # InstanceMethods
         end # Permalink

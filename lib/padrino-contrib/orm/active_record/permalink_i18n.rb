@@ -17,9 +17,8 @@ module Padrino
           module ClassMethods
             def has_permalink(field, options={})
               include InstanceMethods
-              class_inheritable_accessor  :permalink_field, :permalink_langs
-              write_inheritable_attribute :permalink_field, field
-              write_inheritable_attribute :permalink_langs, options.delete(:langs)
+              @_permalink_field = field
+              @_permalink_langs = options.delete(:langs)
               before_save :generate_permalinks
               permalink_langs.each do |lang|
                 validates_uniqueness_of :"#{field}_#{lang}", options
@@ -34,6 +33,14 @@ module Padrino
               name.gsub!(/\s+/, '-') # all spaces to dashes
               name
             end
+
+            def permalink_field
+              @_permalink_field
+            end
+
+            def permalink_langs
+              @_permalink_langs
+            end
           end
 
           module InstanceMethods
@@ -43,8 +50,8 @@ module Padrino
 
             protected
               def generate_permalinks
-                permalink_langs.each do |lang|
-                  self.send(:"permalink_#{lang}=", self.class.permalink_for(read_attribute(:"#{permalink_field}_#{lang}")))
+                self.class.permalink_langs.each do |lang|
+                  self.send(:"permalink_#{lang}=", self.class.permalink_for(read_attribute(:"#{self.class.permalink_field}_#{lang}")))
                 end
               end
           end # InstanceMethods

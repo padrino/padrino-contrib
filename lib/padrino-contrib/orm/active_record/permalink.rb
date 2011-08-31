@@ -17,9 +17,12 @@ module Padrino
           module ClassMethods
             def has_permalink(field)
               include InstanceMethods
-              class_inheritable_accessor  :permalink_field
-              write_inheritable_attribute :permalink_field, field
+              @_permalink_field = field
               before_save :generate_permalink
+            end
+
+            def permalink_field
+              @_permalink_field
             end
           end # ClassMethods
 
@@ -30,11 +33,8 @@ module Padrino
 
             protected
               def generate_permalink
-                self.permalink = read_attribute(permalink_field).downcase.
-                                                                 gsub(/\W/, '-').
-                                                                 gsub(/-+/, '-').
-                                                                 gsub(/-$/, '').
-                                                                 gsub(/^-/, '')
+                self.permalink = read_attribute(self.class.permalink_field).downcase.
+                  gsub(/\W/, '-').gsub(/-+/, '-').gsub(/-$/, '').gsub(/^-/, '')
               end
           end # InstanceMethods
         end # Permalink
