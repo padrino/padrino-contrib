@@ -11,7 +11,7 @@ module Padrino
       #   register Padrino::Contrib::Helpers::Flash
       #
       module Flash
-        def self.register(app)
+        def self.registered(app)
           app.before { @_flash, session[:_flash] = session[:_flash], nil if settings.sessions? && session[:_flash] }
           app.helpers InstanceMethods
         end
