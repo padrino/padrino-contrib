@@ -56,7 +56,7 @@ module Padrino
               end
           end # InstanceMethods
         end # PemalinkI18n
-      end # Ar
+      end # ActiveRecord
     end # Orm
   end # Contrib
 end # Padrino

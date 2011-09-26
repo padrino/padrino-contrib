@@ -47,7 +47,7 @@ module Padrino
               end
           end # InstanceMethods
         end # Permalink
-      end # Mm
+      end # MongoMapper
     end # Orm
   end # Contrib
 end # Padrino

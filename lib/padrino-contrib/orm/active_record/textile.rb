@@ -1,5 +1,3 @@
-require 'RedCloth'
-
 module Padrino
   module Contrib
     module Orm
@@ -18,6 +16,7 @@ module Padrino
         module Textile
           module ClassMethods
             def has_textile(*fields)
+              require 'RedCloth'
               include InstanceMethods
               options = fields.extract_options!
               options.reverse_merge!(:internal_links => :blog)
@@ -52,8 +51,8 @@ module Padrino
                 end
               end
           end # InstanceMethods
-        end # Permalink
-      end # Ar
+        end # Textile
+      end # ActiveRecord
     end # Orm
   end # Contrib
 end # Padrino

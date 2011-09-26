@@ -22,7 +22,7 @@ module Padrino
         # This reload the page changing the I18n.locale
         #
         def switch_to_lang(lang)
-          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}") if options.locales.include?(lang)
+          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}") if settings.locales.include?(lang)
         end
       end # Helpers
 
@@ -31,10 +31,10 @@ module Padrino
         app.extend ClassMethods
         app.set :locales, [:en]
         app.before do
-          if request.path_info =~ /^\/(#{options.locales.join('|')})\b/
+          if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
           else
-            I18n.locale = options.locales[0]
+            I18n.locale = settings.locales[0]
             not_found if request.path_info !~ /^\/?$/
           end
         end

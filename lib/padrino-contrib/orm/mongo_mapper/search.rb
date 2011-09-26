@@ -32,7 +32,7 @@ module Padrino
             end
           end
         end # Permalink
-      end # Mm
+      end # MongoMapper
     end # Orm
   end # Contrib
 end # Padrino

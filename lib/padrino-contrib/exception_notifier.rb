@@ -20,11 +20,11 @@ module Padrino
     module ExceptionNotifier
 
       def self.registered(app)
-        app.set :exceptions_subject, "Exception"
-        app.set :exceptions_to,      "errors@localhost.local"
-        app.set :exceptions_from,    "foo@bar.local"
-        app.set :exceptions_layout,  :layout
-        app.set :redmine, {}
+        app.set :exceptions_subject, "Exception" unless app.respond_to?(:exceptions_subject)
+        app.set :exceptions_to,      "errors@localhost.local" unless app.respond_to?(:exceptions_to)
+        app.set :exceptions_from,    "foo@bar.local" unless app.respond_to?(:exceptions_from)
+        app.set :exceptions_layout,  :layout unless app.respond_to?(:exceptions_layout)
+        app.set :redmine, {} unless app.respond_to?(:redmine)
         app.error 500 do
           boom  = env['sinatra.error']
           body  = ["#{boom.class} - #{boom.message}:", *boom.backtrace].join("\n  ")

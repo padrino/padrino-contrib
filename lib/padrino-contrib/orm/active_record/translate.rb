@@ -35,8 +35,8 @@ module Padrino
               super
             end
           end # InstanceMethods
-        end # ArTranslate
-      end # Ar
+        end # Translate
+      end # ActiveRecord
     end # Orm
   end # Contrib
 end # Padrino

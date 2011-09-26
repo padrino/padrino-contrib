@@ -38,7 +38,7 @@ module Padrino
               end
           end # InstanceMethods
         end # Permalink
-      end # Ar
+      end # ActiveRecord
     end # Orm
   end # Contrib
 end # Padrino
