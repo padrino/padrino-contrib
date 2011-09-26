@@ -19,7 +19,7 @@ module Padrino
         app.use Padrino::Contrib::FlashSession::Middleware, app.session_id
       end
 
-      module Middleware
+      class Middleware
         def initialize(app, session_key = 'session_id')
           @app = app
           @session_key = session_key.to_s
