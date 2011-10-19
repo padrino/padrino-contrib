@@ -14,6 +14,13 @@ module Padrino
         end
 
         module Helpers
+          def stylesheet_link_tag_jquery(options={})
+            theme = options.delete(:theme) || :smoothness
+            version = options.delete(:version) || '1.8.16'
+
+            stylesheet_link_tag('http://ajax.googleapis.com/ajax/libs/jqueryui/%s/themes/%s/jquery-ui.css' % [version, theme], options)
+          end
+
           def javascript_include_tag_jquery(options={})
             libs  = ["http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"]
 
