@@ -7,19 +7,19 @@ module Padrino
         #
         # You need to to your model a column called +:permalink+
         #
-        # then use +has_permalink :title like:
+        # then use +has_i18n_permalink :title like:
         #
         #   class Page < ActiveRecord::Base
-        #     has_permalink :page, :langs => [:en, :fr, :de]
+        #     has_i18n_permalink :page, :langs => [:en, :fr, :de]
         #   end
         #
         module PermalinkI18n
           module ClassMethods
-            def has_permalink(field, options={})
+            def has_i18n_permalink(field, options={})
               include InstanceMethods
-              @_permalink_field = field
-              @_permalink_langs = options.delete(:langs)
-              before_save :generate_permalinks
+              @_i18n_permalink_field = field
+              @_i18n_permalink_langs = options.delete(:langs)
+              before_save :generate_i18n_permalinks
               permalink_langs.each do |lang|
                 validates_uniqueness_of :"#{field}_#{lang}", options
               end
@@ -35,11 +35,11 @@ module Padrino
             end
 
             def permalink_field
-              @_permalink_field
+              @_i18n_permalink_field
             end
 
             def permalink_langs
-              @_permalink_langs
+              @_i18n_permalink_langs
             end
           end
 
@@ -49,7 +49,7 @@ module Padrino
             end
 
             protected
-              def generate_permalinks
+              def generate_i18n_permalinks
                 self.class.permalink_langs.each do |lang|
                   self.send(:"permalink_#{lang}=", self.class.permalink_for(read_attribute(:"#{self.class.permalink_field}_#{lang}")))
                 end
