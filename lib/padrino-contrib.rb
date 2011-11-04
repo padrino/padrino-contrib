@@ -14,9 +14,9 @@ module Padrino
 end # Padrino
 
 if defined?(ActiveRecord)
-  Dir[File.join(File.expand_path('../', __FILE__), '/padrino-contrib/orm/active_record/**/*.rb')].each { |d| require d }
+  Dir[File.join(File.expand_path('../', __FILE__), '/padrino-contrib/orm/active_record/**/*.rb')].sort.each { |d| require d }
 end
 
 if defined?(MongoMapper)
-  Dir[File.join(File.expand_path('../', __FILE__), '/padrino-contrib/orm/mongo_mapper/**/*.rb')].each { |d| require d }
+  Dir[File.join(File.expand_path('../', __FILE__), '/padrino-contrib/orm/mongo_mapper/**/*.rb')].sort.each { |d| require d }
 end

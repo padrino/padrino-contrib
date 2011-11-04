@@ -20,12 +20,12 @@ module Padrino
               @_i18n_permalink_field = field
               @_i18n_permalink_langs = options.delete(:langs)
               before_save :generate_i18n_permalinks
-              permalink_langs.each do |lang|
+              i18n_permalink_langs.each do |lang|
                 validates_uniqueness_of :"#{field}_#{lang}", options
               end
             end
 
-            def permalink_for(name)
+            def i18n_permalink_for(name)
               name = Iconv.iconv('ascii//translit//IGNORE', 'utf-8', name).to_s
               name.gsub!(/\W+/, ' ') # non-words to space
               name.strip!
@@ -34,11 +34,11 @@ module Padrino
               name
             end
 
-            def permalink_field
+            def i18n_permalink_field
               @_i18n_permalink_field
             end
 
-            def permalink_langs
+            def i18n_permalink_langs
               @_i18n_permalink_langs
             end
           end
@@ -50,8 +50,8 @@ module Padrino
 
             protected
               def generate_i18n_permalinks
-                self.class.permalink_langs.each do |lang|
-                  self.send(:"permalink_#{lang}=", self.class.permalink_for(read_attribute(:"#{self.class.permalink_field}_#{lang}")))
+                self.class.i18n_permalink_langs.each do |lang|
+                  self.send(:"permalink_#{lang}=", self.class.i18n_permalink_for(read_attribute(:"#{self.class.i18n_permalink_field}_#{lang}")))
                 end
               end
           end # InstanceMethods
