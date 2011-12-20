@@ -48,7 +48,7 @@ module Padrino
         app.error 404 do
           response.status = 404
           content_type 'text/html', :charset => "utf-8"
-          render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_layout
+          render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_views
         end
       end # self.registered
     end # ExceptionNotifier
