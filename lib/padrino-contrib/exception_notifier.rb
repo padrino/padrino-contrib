@@ -24,6 +24,7 @@ module Padrino
         app.set :exceptions_to,      "errors@localhost.local" unless app.respond_to?(:exceptions_to)
         app.set :exceptions_from,    "foo@bar.local" unless app.respond_to?(:exceptions_from)
         app.set :exceptions_layout,  :layout unless app.respond_to?(:exceptions_layout)
+        app.set :exceptions_views,   app.views unless app.respond_to?(:exceptions_views)
         app.set :redmine, {} unless app.respond_to?(:redmine)
         app.error 500 do
           boom  = env['sinatra.error']
@@ -42,12 +43,12 @@ module Padrino
           end
           response.status = 500
           content_type 'text/html', :charset => "utf-8"
-          render settings.exceptions_page, :layout => settings.exceptions_layout
+          render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_views
         end
         app.error 404 do
           response.status = 404
           content_type 'text/html', :charset => "utf-8"
-          render settings.exceptions_page, :layout => settings.exceptions_layout
+          render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_views
         end
       end # self.registered
     end # ExceptionNotifier
