@@ -40,6 +40,7 @@ module Padrino
             to app.exceptions_to
             from app.exceptions_from
             body body
+            delivery_method app.delivery_method if app.respond_to?(:delivery_method)
           end
           response.status = 500
           content_type 'text/html', :charset => "utf-8"
