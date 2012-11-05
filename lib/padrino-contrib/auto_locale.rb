@@ -7,7 +7,7 @@ module Padrino
     # ==== Usage
     #
     #   class MyApp < Padrino::Application
-    #     register AutoLocale
+    #     register Padrino::Contrib::AutoLocale
     #     set :locales, [:en, :ru, :de] # First locale is the default locale
     #   end
     #
