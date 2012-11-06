@@ -36,7 +36,6 @@ module Padrino
         app.extend ClassMethods
         app.set :locales, [:en]
         app.before do
-          puts request.path_info.to_s
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
           else 
