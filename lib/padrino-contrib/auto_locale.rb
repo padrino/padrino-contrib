@@ -54,15 +54,15 @@ module Padrino
 
         def self.padrino_route_added(route, verb, path, args, options, block)
           route.instance_variable_set(:@original_path, "/(:lang)#{route.original_path}") unless route.original_path =~/:lang/
-          if route.original_path == "/:lang/" || route.original_path == "/(:lang)/"
-            # add low priority so path doesn't become a catch all
-            args.first ||= {}
-            args.first.merge!(:priority=>:low) 
-          end
         end
       end
 
       module ClassMethods
+        def route(verb, path, *args, &block)
+          # add low priority to root route to avoid catch all
+          args.first.merge!(priority: :low) if args.first && ["/","/(:lang)/","/:lang/"].include?(args.first[:map])
+          super(verb, path, *args, &block)
+        end
         ##
         # We need to add always a lang to all our routes
         #
