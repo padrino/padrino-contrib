@@ -46,7 +46,7 @@ module Padrino
           content_type 'text/html', :charset => "utf-8"
           render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_views
         end
-        app.error 404 do
+        app.not_found do
           response.status = 404
           content_type 'text/html', :charset => "utf-8"
           render settings.exceptions_page, :layout => settings.exceptions_layout, :views => settings.exceptions_views
