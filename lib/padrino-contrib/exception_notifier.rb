@@ -26,13 +26,20 @@ module Padrino
         app.set :exceptions_layout,  :layout unless app.respond_to?(:exceptions_layout)
         app.set :exceptions_views,   app.views unless app.respond_to?(:exceptions_views)
         app.set :redmine, {} unless app.respond_to?(:redmine)
+        app.set :exceptions_params_filter, ['password', 'password_confirmation'] unless app.respond_to?(:exceptions_params_filter)
         app.error 500 do
           boom  = env['sinatra.error']
           body  = ["#{boom.class} - #{boom.message}:", *boom.backtrace].join("\n  ")
           body += "\n\n---Env:\n"
           env.each { |k,v| body += "\n#{k}: #{v}" }
           body += "\n\n---Params:\n"
-          params.each { |k,v| body += "\n#{k.inspect} => #{v.inspect}" }
+          params.each do |k,v|
+            if settings.exceptions_params_filter.include?(k)
+              body += "\n#{k.inspect} => [FILTERED]"
+            else
+              body += "\n#{k.inspect} => #{v.inspect}"
+            end
+          end
           logger.error body
           settings.redmine.each { |k,v| body += "\n#{k.to_s.capitalize}: #{v}" }
           app.email do
