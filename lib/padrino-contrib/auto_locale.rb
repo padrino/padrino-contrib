@@ -40,7 +40,11 @@ module Padrino
         end
 
         def self.padrino_route_added(route, verb, path, args, options, block)
-          route.instance_variable_set(:@original_path, "/:lang#{route.original_path}") unless route.original_path =~/:lang/
+          ##
+          # TODO: Regex original_path needs to be served as well.
+          #
+          return unless route.original_path.is_a?(String)
+          route.path = "/:lang#{route.original_path}" unless route.original_path.empty? or route.original_path =~/:lang/
         end
       end
 
