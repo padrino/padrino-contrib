@@ -9,6 +9,7 @@ module Padrino
     #   class MyApp < Padrino::Application
     #     register AutoLocale
     #     set :locales, [:en, :ru, :de] # First locale is the default locale
+    #     set :locale_exclusive_paths, ['/js', '/css', '/img'] # asset uri paths which shouldn't be localized
     #   end
     #
     #   # view.haml
@@ -30,6 +31,8 @@ module Padrino
         app.helpers Padrino::Contrib::AutoLocale::Helpers
         app.extend ClassMethods
         app.set :locales, [:en]
+        app.set :locale_exclusive_paths, []
+        @@exclusive_paths = false
         app.before do
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
@@ -52,8 +55,26 @@ module Padrino
             redirect "/#{I18n.locale.to_s}/"
 
           else
-            # Urls should be either "/" or "/:lang/..." style, otherwise return 404 error
-            not_found
+            # Urls which are not "/" or "/:lang/..." style are invalid. But first we should check if it's an asset path.
+            unless @@exclusive_paths.is_a?(Array)
+              if settings.respond_to?(:assets) and
+                settings.assets.respond_to?(:served) and
+                settings.assets.served.is_a?(Hash)
+                # auto include sinatra-assetpack configuration
+                @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
+              else
+                @@exclusive_paths = settings.locale_exclusive_paths
+              end
+            end
+
+            # Return 404 Not Found for invalid urls, unless it's an asset path.
+            not_found unless @@exclusive_paths.detect do |path|
+              if path.is_a?(Regexp)
+                !!path.match(request.path_info)
+              elsif path.is_a?(String)
+                request.path_info.start_with?(path.end_with?("/") ? path : "#{path}/")
+              end
+            end
           end
         end
 
