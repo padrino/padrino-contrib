@@ -10,7 +10,7 @@ group :development do
 end
 
 group :test, :development do
-  gem 'pry-debugger'
+  gem 'pry-debugger' unless ENV['TRAVIS']
 end
 
 group :test do
