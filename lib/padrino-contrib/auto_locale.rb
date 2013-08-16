@@ -93,7 +93,7 @@ module Padrino
         #
         def url(*args)
           params = args.extract_options!
-          params[:lang] = I18n.locale
+          params[:lang] ||= I18n.locale
           args << params
           super(*args)
         end
