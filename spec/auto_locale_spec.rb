@@ -15,7 +15,7 @@ describe Padrino::Contrib::AutoLocale do
     end
 
     it 'allows overriding lang' do
-      expect(@app.url(:foo, lang: 'ru')).to eq '/ru/foo'
+      expect(@app.url(:foo, :lang => 'ru')).to eq '/ru/foo'
     end
   end
 end
