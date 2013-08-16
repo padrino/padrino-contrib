@@ -7,6 +7,8 @@ Bundler.require(:default, PADRINO_ENV)
 require 'padrino-contrib'
 
 RSpec.configure do |config|
+  config.include Rack::Test::Methods
+
   # Sets up a Sinatra::Base subclass defined with the block
   # given. Used in setup or individual spec methods to establish
   # the application.
@@ -15,6 +17,6 @@ RSpec.configure do |config|
   end
 
   def app
-    Rack::Lint.new(@app)
+    @app
   end
 end

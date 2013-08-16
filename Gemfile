@@ -16,4 +16,5 @@ end
 group :test do
   gem 'padrino-core'
   gem 'rspec'
+  gem 'rack-test'
 end

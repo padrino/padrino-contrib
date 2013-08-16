@@ -40,16 +40,17 @@ module Padrino
           elsif request.path_info =~ /^\/?$/
             # Root path "/" needs special treatment, as it doesn't contain any language parameter.
 
-            # First guess the preferred language from the http header
-            for browser_locale in request.env['HTTP_ACCEPT_LANGUAGE'].split(",")
+            # Default to the first locale
+            I18n.locale = settings.locales.first
+
+            # Then try to guess the preferred language from the http header
+            for browser_locale in (request.env['HTTP_ACCEPT_LANGUAGE'] || '').split(",")
               locale = browser_locale.split(";").first.downcase.sub('-', '_')
               if settings.locales.include?(locale.to_sym)
                 I18n.locale = locale.to_sym
                 break
               end
             end
-            # If none found use the default locale
-            I18n.locale ||= settings.locales[0]
 
             # Then redirect from "/" to "/:lang" to match the new routing urls
             redirect "/#{I18n.locale.to_s}/"
