@@ -23,7 +23,9 @@ module Padrino
         # This reload the page changing the I18n.locale
         #
         def switch_to_lang(lang)
-          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}") if settings.locales.include?(lang)
+          return unless settings.locales.include?(lang)
+          return "/#{lang}" if request.path_info == '/'
+          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}")
         end
       end # Helpers
 
@@ -34,47 +36,45 @@ module Padrino
         app.set :locale_exclusive_paths, []
         @@exclusive_paths = false
         app.before do
+          # Gather excluded paths
+          unless @@exclusive_paths.is_a?(Array)
+            # auto include sinatra-assetpack configuration
+            if settings.respond_to?(:assets) and
+              settings.assets.respond_to?(:served) and
+              settings.assets.served.is_a?(Hash)
+              @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
+            else
+              @@exclusive_paths = settings.locale_exclusive_paths
+            end
+          end
+
+          # Default to the first locale
+          I18n.locale = settings.locales.first
+
+          # First check if the path starts with a known locale
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
 
-          elsif request.path_info =~ /^\/?$/
-            # Root path "/" needs special treatment, as it doesn't contain any language parameter.
+          # Then check if the path is excluded
+          elsif AutoLocale.excluded_path?(request.path_info, @@exclusive_paths)
+            next
 
-            # First guess the preferred language from the http header
-            for browser_locale in request.env['HTTP_ACCEPT_LANGUAGE'].split(",")
+          # Root path "/" needs special treatment, as it doesn't contain any language parameter.
+          elsif request.path_info =~ /^\/?$/
+            # Try to guess the preferred language from the http header
+            for browser_locale in (request.env['HTTP_ACCEPT_LANGUAGE'] || '').split(",")
               locale = browser_locale.split(";").first.downcase.sub('-', '_')
               if settings.locales.include?(locale.to_sym)
                 I18n.locale = locale.to_sym
                 break
               end
             end
-            # If none found use the default locale
-            I18n.locale ||= settings.locales[0]
-
             # Then redirect from "/" to "/:lang" to match the new routing urls
             redirect "/#{I18n.locale.to_s}/"
 
+          # Return 404 not found for everything else
           else
-            # Urls which are not "/" or "/:lang/..." style are invalid. But first we should check if it's an asset path.
-            unless @@exclusive_paths.is_a?(Array)
-              if settings.respond_to?(:assets) and
-                settings.assets.respond_to?(:served) and
-                settings.assets.served.is_a?(Hash)
-                # auto include sinatra-assetpack configuration
-                @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
-              else
-                @@exclusive_paths = settings.locale_exclusive_paths
-              end
-            end
-
-            # Return 404 Not Found for invalid urls, unless it's an asset path.
-            not_found unless @@exclusive_paths.detect do |path|
-              if path.is_a?(Regexp)
-                !!path.match(request.path_info)
-              elsif path.is_a?(String)
-                request.path_info.start_with?(path.end_with?("/") ? path : "#{path}/")
-              end
-            end
+            not_found
           end
         end
 
@@ -83,7 +83,19 @@ module Padrino
           # TODO: Regex original_path needs to be served as well.
           #
           return unless route.original_path.is_a?(String)
-          route.path = "/:lang#{route.original_path}" unless route.original_path =~/:lang/
+          excluded_paths = block.binding.eval('settings').locale_exclusive_paths
+          return if AutoLocale.excluded_path?(route.original_path, excluded_paths)
+          route.path = "/:lang#{route.original_path}" unless route.original_path =~ /:lang/
+        end
+
+        def self.excluded_path?(path, excluded_paths)
+          excluded_paths.detect do |excluded_path|
+            if excluded_path.is_a?(Regexp)
+              !!excluded_path.match(path)
+            elsif excluded_path.is_a?(String)
+              path.start_with?(excluded_path.end_with?("/") ? excluded_path : "#{excluded_path}/")
+            end
+          end
         end
       end
 
@@ -93,7 +105,7 @@ module Padrino
         #
         def url(*args)
           params = args.extract_options!
-          params[:lang] = I18n.locale
+          params[:lang] ||= I18n.locale
           args << params
           super(*args)
         end
