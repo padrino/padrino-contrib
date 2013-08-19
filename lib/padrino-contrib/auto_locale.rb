@@ -34,12 +34,28 @@ module Padrino
         app.set :locale_exclusive_paths, []
         @@exclusive_paths = false
         app.before do
+          # Gather excluded paths
+          unless @@exclusive_paths.is_a?(Array)
+            # auto include sinatra-assetpack configuration
+            if settings.respond_to?(:assets) and
+              settings.assets.respond_to?(:served) and
+              settings.assets.served.is_a?(Hash)
+              @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
+            else
+              @@exclusive_paths = settings.locale_exclusive_paths
+            end
+          end
+
+          # First check if the path starts with a known locale
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
 
-          elsif request.path_info =~ /^\/?$/
-            # Root path "/" needs special treatment, as it doesn't contain any language parameter.
+          # Then check if the path is excluded
+          elsif AutoLocale.excluded_path?(request.path_info, @@exclusive_paths)
+            next
 
+          # Root path "/" needs special treatment, as it doesn't contain any language parameter.
+          elsif request.path_info =~ /^\/?$/
             # Default to the first locale
             I18n.locale = settings.locales.first
 
@@ -51,25 +67,12 @@ module Padrino
                 break
               end
             end
-
             # Then redirect from "/" to "/:lang" to match the new routing urls
             redirect "/#{I18n.locale.to_s}/"
 
+          # Return 404 not found for everything else
           else
-            # Gather excluded paths
-            unless @@exclusive_paths.is_a?(Array)
-              if settings.respond_to?(:assets) and
-                settings.assets.respond_to?(:served) and
-                settings.assets.served.is_a?(Hash)
-                # auto include sinatra-assetpack configuration
-                @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
-              else
-                @@exclusive_paths = settings.locale_exclusive_paths
-              end
-            end
-
-            # Return 404 Not Found for invalid urls, unless it's an asset path.
-            not_found unless AutoLocale.excluded_path?(request.path_info, @@exclusive_paths)
+            not_found
           end
         end
 

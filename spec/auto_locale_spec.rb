@@ -44,7 +44,7 @@ describe Padrino::Contrib::AutoLocale do
   end
 
   describe 'when setting locale_exclusive_paths' do
-    before :all do
+    before :each do
       mock_app {
         register Padrino::Contrib::AutoLocale
         set :locale_exclusive_paths, [ '/unlocalized' ]
@@ -68,6 +68,14 @@ describe Padrino::Contrib::AutoLocale do
         expect(last_response).to be_ok
         expect(last_response.body).to eq 'unlocalized path'
       end
+    end
+
+    it 'allows excluding the root path "/"' do
+      @app.locale_exclusive_paths << /^\/?$/
+      @app.get('/') { 'root path' }
+      get '/'
+      expect(last_response).not_to be_redirect
+      expect(last_response.body).to eq 'root path'
     end
   end
 
