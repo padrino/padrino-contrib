@@ -46,6 +46,9 @@ module Padrino
             end
           end
 
+          # Default to the first locale
+          I18n.locale = settings.locales.first
+
           # First check if the path starts with a known locale
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
@@ -56,10 +59,7 @@ module Padrino
 
           # Root path "/" needs special treatment, as it doesn't contain any language parameter.
           elsif request.path_info =~ /^\/?$/
-            # Default to the first locale
-            I18n.locale = settings.locales.first
-
-            # Then try to guess the preferred language from the http header
+            # Try to guess the preferred language from the http header
             for browser_locale in (request.env['HTTP_ACCEPT_LANGUAGE'] || '').split(",")
               locale = browser_locale.split(";").first.downcase.sub('-', '_')
               if settings.locales.include?(locale.to_sym)

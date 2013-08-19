@@ -47,6 +47,7 @@ describe Padrino::Contrib::AutoLocale do
     before :each do
       mock_app {
         register Padrino::Contrib::AutoLocale
+        set :locales, [ :es, :en ]
         set :locale_exclusive_paths, [ '/unlocalized' ]
         get('/bar') { 'bar' }
         get('/unlocalized/path') { 'unlocalized path' }
@@ -67,6 +68,10 @@ describe Padrino::Contrib::AutoLocale do
         get '/unlocalized/path'
         expect(last_response).to be_ok
         expect(last_response.body).to eq 'unlocalized path'
+      end
+
+      it 'sets I18n.locale to the first locale' do
+        expect { get '/unlocalized/path' }.to change { I18n.locale }.to @app.locales.first
       end
     end
 
