@@ -32,6 +32,10 @@ describe Padrino::Contrib::AutoLocale do
       expect(last_request.path_info).to eq "/#{@app.locales.first}/"
     end
 
+    it 'sets I18n.locale to the first locale' do
+      expect { get '/' }.to change { I18n.locale }.to @app.locales.first
+    end
+
     it "doesn't choke when the HTTP_ACCEPT_LANGUAGE header is not present" do
       expect do
         get '/', { }, 'HTTP_ACCEPT_LANGUAGE' => nil
@@ -39,9 +43,32 @@ describe Padrino::Contrib::AutoLocale do
     end
   end
 
-  it 'returns 404 when requesting an unlocalized path' do
-    get '/bar'
-    expect(last_response).to be_not_found
+  describe 'when setting locale_exclusive_paths' do
+    before :all do
+      mock_app {
+        register Padrino::Contrib::AutoLocale
+        set :locale_exclusive_paths, [ '/unlocalized' ]
+        get('/bar') { 'bar' }
+        get('/unlocalized/path') { 'unlocalized path' }
+      }
+    end
+
+    it 'returns 404 if the path is not excluded' do
+      get '/bar'
+      expect(last_response).to be_not_found
+    end
+
+    context 'when the path is excluded' do
+      it 'does not prepend :lang to the route' do
+        expect(@app.routes.last.original_path).not_to match /:lang/
+      end
+
+      it 'lets the request through' do
+        get '/unlocalized/path'
+        expect(last_response).to be_ok
+        expect(last_response.body).to eq 'unlocalized path'
+      end
+    end
   end
 
   describe 'overloaded #url' do

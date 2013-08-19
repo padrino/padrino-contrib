@@ -56,7 +56,7 @@ module Padrino
             redirect "/#{I18n.locale.to_s}/"
 
           else
-            # Urls which are not "/" or "/:lang/..." style are invalid. But first we should check if it's an asset path.
+            # Gather excluded paths
             unless @@exclusive_paths.is_a?(Array)
               if settings.respond_to?(:assets) and
                 settings.assets.respond_to?(:served) and
@@ -69,13 +69,7 @@ module Padrino
             end
 
             # Return 404 Not Found for invalid urls, unless it's an asset path.
-            not_found unless @@exclusive_paths.detect do |path|
-              if path.is_a?(Regexp)
-                !!path.match(request.path_info)
-              elsif path.is_a?(String)
-                request.path_info.start_with?(path.end_with?("/") ? path : "#{path}/")
-              end
-            end
+            not_found unless AutoLocale.excluded_path?(request.path_info, @@exclusive_paths)
           end
         end
 
@@ -84,7 +78,19 @@ module Padrino
           # TODO: Regex original_path needs to be served as well.
           #
           return unless route.original_path.is_a?(String)
-          route.path = "/:lang#{route.original_path}" unless route.original_path =~/:lang/
+          excluded_paths = block.binding.eval('settings').locale_exclusive_paths
+          return if AutoLocale.excluded_path?(route.original_path, excluded_paths)
+          route.path = "/:lang#{route.original_path}" unless route.original_path =~ /:lang/
+        end
+
+        def self.excluded_path?(path, excluded_paths)
+          excluded_paths.detect do |excluded_path|
+            if excluded_path.is_a?(Regexp)
+              !!excluded_path.match(path)
+            elsif excluded_path.is_a?(String)
+              path.start_with?(excluded_path.end_with?("/") ? excluded_path : "#{excluded_path}/")
+            end
+          end
         end
       end
 
