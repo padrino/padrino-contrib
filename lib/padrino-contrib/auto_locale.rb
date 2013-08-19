@@ -23,7 +23,9 @@ module Padrino
         # This reload the page changing the I18n.locale
         #
         def switch_to_lang(lang)
-          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}") if settings.locales.include?(lang)
+          return unless settings.locales.include?(lang)
+          return "/#{lang}" if request.path_info == '/'
+          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}")
         end
       end # Helpers
 

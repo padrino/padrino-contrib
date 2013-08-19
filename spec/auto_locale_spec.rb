@@ -95,4 +95,32 @@ describe Padrino::Contrib::AutoLocale do
       expect(@app.url(:foo, :lang => 'ru')).to eq '/ru/foo'
     end
   end
+
+  describe '#switch_to_lang' do
+    before :all do
+      mock_app {
+        register Padrino::Contrib::AutoLocale
+        set :locales, [ :es, :en ]
+        set :locale_exclusive_paths, [ /^\/?$/, '/unlocalized' ]
+
+        get('/(:lang)') { switch_to_lang(:en) }
+        get('/unlocalized/path') { switch_to_lang(:en) }
+      }
+    end
+
+    it 'returns the current localized path switched to the requested lang' do
+      get '/es'
+      expect(last_response.body).to eq '/en'
+    end
+
+    it 'switches the unlocalized root path to the requested lang' do
+      get '/'
+      expect(last_response.body).to eq '/en'
+    end
+
+    it 'returns the same path if the path is not localized' do
+      get '/unlocalized/path'
+      expect(last_response.body).to eq '/unlocalized/path'
+    end
+  end
 end
