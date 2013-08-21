@@ -6,7 +6,7 @@ describe Padrino::Contrib::ExceptionNotifier do
     mock_app {
       register Padrino::Rendering
       register Padrino::Mailer
-      set :delivery_method, test: { } # Resembles a more realistic SMTP configuration
+      set :delivery_method, :test => { } # Resembles a more realistic SMTP configuration
       register Padrino::Contrib::ExceptionNotifier
       set :exceptions_views, Padrino.root('views/exception_notifier')
       set :exceptions_page, 'errors.erb'
@@ -46,19 +46,19 @@ describe Padrino::Contrib::ExceptionNotifier do
     end
 
     it 'sends the request params' do
-      get '/boom', foo: 'bar'
+      get '/boom', :foo => 'bar'
       expect(last_email.body).to match /"foo" => "bar"/
     end
 
     it 'filters out password and password_confirmation params' do
-      get '/boom', password: 'super_secret', password_confirmation: 'super_secret'
+      get '/boom', :password => 'super_secret', :password_confirmation => 'super_secret'
       expect(last_email.body).to match /"password" => \[FILTERED\]/
       expect(last_email.body).to match /"password_confirmation" => \[FILTERED\]/
     end
 
     it 'allows customizing filtered params' do
       @app.set :exceptions_params_filter, [ 'foo' ]
-      get '/boom', foo: 'bar'
+      get '/boom', :foo => 'bar'
       expect(last_email.body).to match /"foo" => \[FILTERED\]/
     end
 
