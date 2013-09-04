@@ -34,10 +34,15 @@ module Padrino
           env.each { |k,v| body += "\n#{k}: #{v}" }
           body += "\n\n---Params:\n"
           params.each do |k,v|
-            if settings.exceptions_params_filter.include?(k)
-              body += "\n#{k.inspect} => [FILTERED]"
+            if v.is_a? Hash
+              (settings.exceptions_params_filter & v.keys).each{ |key| v.merge! key => '[FILTERED]' }
+              body += "\n#{k.inspect} => { #{v.map{ |k,v| "#{k.inspect} => #{v == '[FILTERED]' ? v.chomp : v.inspect}" }.join(', ')} }"
             else
-              body += "\n#{k.inspect} => #{v.inspect}"
+              if settings.exceptions_params_filter.include?(k)
+                body += "\n#{k.inspect} => [FILTERED]"
+              else
+                body += "\n#{k.inspect} => #{v.inspect}"
+              end
             end
           end
           logger.error body

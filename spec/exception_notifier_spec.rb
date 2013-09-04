@@ -62,6 +62,15 @@ describe Padrino::Contrib::ExceptionNotifier do
       expect(last_email.body).to match /"foo" => \[FILTERED\]/
     end
 
+    it 'allows filtering of nested request params' do
+      get '/boom', { :account => { :email => 'foo@example.com',
+                                   :password => 'super_secret',
+                                   :password_confirmation => 'super_secret' }
+                    }
+      expect(last_email.body).to match /"password" => \[FILTERED\]/
+      expect(last_email.body).to match /"password_confirmation" => \[FILTERED\]/
+    end
+
     it 'renders an error page' do
       get '/boom'
       expect(last_response.status).to eq 500
