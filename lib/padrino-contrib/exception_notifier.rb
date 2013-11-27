@@ -23,7 +23,7 @@ module Padrino
         app.set :exceptions_subject, "Exception" unless app.respond_to?(:exceptions_subject)
         app.set :exceptions_to,      "errors@localhost.local" unless app.respond_to?(:exceptions_to)
         app.set :exceptions_from,    "foo@bar.local" unless app.respond_to?(:exceptions_from)
-        app.set :exceptions_layout,  :layout unless app.respond_to?(:exceptions_layout)
+        app.set :exceptions_layout,  :application unless app.respond_to?(:exceptions_layout)
         app.set :exceptions_views,   app.views unless app.respond_to?(:exceptions_views)
         app.set :redmine, {} unless app.respond_to?(:redmine)
         app.set :exceptions_params_filter, ['password', 'password_confirmation'] unless app.respond_to?(:exceptions_params_filter)
