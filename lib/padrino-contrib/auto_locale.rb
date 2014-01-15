@@ -24,8 +24,8 @@ module Padrino
         #
         def switch_to_lang(lang)
           return unless settings.locales.include?(lang)
-          return "/#{lang}" if request.path_info == '/'
-          request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}")
+          return url("/#{lang}", false) if request.path_info == '/'
+          url(request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}"), false)
         end
       end # Helpers
 
@@ -70,7 +70,7 @@ module Padrino
               end
             end
             # Then redirect from "/" to "/:lang" to match the new routing urls
-            redirect "/#{I18n.locale.to_s}/"
+            redirect url("/#{I18n.locale.to_s}/", false)
 
           # Return 404 not found for everything else
           else
