@@ -4,12 +4,13 @@ require 'mail'
 describe Padrino::Contrib::ExceptionNotifier do
   before :each do
     mock_app {
-      register Padrino::Rendering
+      register Padrino::Helpers
       register Padrino::Mailer
       set :delivery_method, :test => { } # Resembles a more realistic SMTP configuration
       register Padrino::Contrib::ExceptionNotifier
       set :exceptions_views, Padrino.root('views/exception_notifier')
       set :exceptions_page, 'errors.erb'
+      set :exceptions_layout, "layout.erb"
 
       get(:boom) { 420 / 0 }
     }
