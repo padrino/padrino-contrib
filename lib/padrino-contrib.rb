@@ -9,6 +9,7 @@ module Padrino
       autoload :AssetsCompressor, 'padrino-contrib/helpers/assets_compressor.rb'
       autoload :JQuery, 'padrino-contrib/helpers/jquery.rb'
       autoload :Flash, 'padrino-contrib/helpers/flash.rb'
+      autoload :Breadcrumbs, 'padrino-contrib/helpers/breadcrumbs.rb'
     end # Helpers
   end # Contrib
 end # Padrino

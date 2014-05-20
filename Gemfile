@@ -19,4 +19,5 @@ group :test do
   gem 'padrino-mailer'
   gem 'rspec'
   gem 'rack-test'
+  gem 'webrat'
 end
