@@ -15,7 +15,9 @@ end
 
 group :test do
   gem 'padrino-core'
+  gem 'padrino-helpers'
   gem 'padrino-mailer'
   gem 'rspec'
   gem 'rack-test'
+  gem 'webrat'
 end
