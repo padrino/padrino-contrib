@@ -2,6 +2,7 @@
 
 This package includes a variety of add-on components for Padrino Framework:
 
+*   breadcrumbs               - Simple breadcrumb navigation helpers
 *   exception_notifier        - Send errors through mail or/and to redmine
 *   auto_locale               - Switch for you automatically the I18n.locale
 *   flash_session             - Middleware that help you in passing your session in the URI, when it should be in the cookie.
@@ -23,6 +24,7 @@ In your Padrino project edit:
   require 'padrino-contrib/exception_notifier'
   # require 'padrino-contrib/orm/active_record/permalink'
   # require 'padrino-contrib/orm/active_record/textile'
+  # require 'padrino-contrib/helpers/breadcrumbs'
 
   Padrino.load! # Remember to add contribs before that line!
 
