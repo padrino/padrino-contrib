@@ -63,7 +63,7 @@ module Padrino
           elsif request.path_info =~ /^\/?$/
             # Try to guess the preferred language from the http header
             for browser_locale in (request.env['HTTP_ACCEPT_LANGUAGE'] || '').split(",")
-              locale = browser_locale.split(";").first.downcase.sub('-', '_')
+              locale = browser_locale.split(";").first.downcase.split("-").first
               if settings.locales.include?(locale.to_sym)
                 I18n.locale = locale.to_sym
                 break
