@@ -21,6 +21,9 @@ module Padrino
         #
         #  post.description_it => "I'm Italian"
         #
+        # if post_description_fr don't exist, now return
+        # the default translate (with I18n.default_locale)
+        #
         module Translate
           module ClassMethods
             def has_locale
@@ -32,6 +35,8 @@ module Padrino
             def method_missing(method_name, *arguments)
               attribute = "#{method_name}_#{I18n.locale}".to_sym
               return self.send(attribute) if I18n.locale.present? && self.respond_to?(attribute)
+              attribute_default = "#{method_name}_#{I18n.default_locale}"
+              return self.send(attribute_default) if I18n.default_locale.present? && self.respond_to?(attribute_default)
               super
             end
           end # InstanceMethods
