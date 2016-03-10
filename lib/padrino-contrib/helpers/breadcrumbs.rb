@@ -168,9 +168,9 @@ module Padrino
           #
           def registered(app)
             require 'padrino-contrib/helpers/breadcrumbs'
-            app.helpers Padrino::Contrib::Helpers::Breadcrumbs::Helpers
+            app.helpers Padrino::Contrib::Helpers::Breadcrumbs::Helpers if app.respond_to?(:helpers)
           end
-          alias :included :registered
+          alias_method :included, :registered
         end
 
         module Helpers

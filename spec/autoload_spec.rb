@@ -16,6 +16,6 @@ describe 'Autoload' do
                  gsub(/version/i, 'VERSION'). # this is a constant
                  gsub(/Jquery/, 'JQuery')
 
-    it(klass) { eval("#{klass}").should be_true }
+    it(klass) { expect(eval("#{klass}")).to be_truthy }
   end
 end
