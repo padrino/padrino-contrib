@@ -23,7 +23,7 @@ task :release => :bump
 desc "Run complete application spec suite"
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = './spec/**/*_spec.rb'
-  t.rspec_opts = %w(--format documentation --fail-fast)
+  t.rspec_opts = %w(--color --format documentation --fail-fast)
 end
 
 task :default => :spec

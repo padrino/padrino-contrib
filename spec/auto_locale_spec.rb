@@ -103,7 +103,7 @@ describe Padrino::Contrib::AutoLocale do
         set :locales, [ :es, :en ]
         set :locale_exclusive_paths, [ /^\/?$/, '/unlocalized' ]
 
-        get('/(:lang)') { switch_to_lang(:en) }
+        get('/(:lang)?') { switch_to_lang(:en) }
         get('/unlocalized/path') { switch_to_lang(:en) }
       }
     end

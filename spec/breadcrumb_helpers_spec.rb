@@ -4,9 +4,9 @@ describe "BreadcrumbHelpers" do
   include Padrino::Helpers::OutputHelpers
   include Padrino::Helpers::TagHelpers
   include Padrino::Helpers::AssetTagHelpers
-  include Padrino::Contrib::Helpers::Breadcrumbs
+  include Padrino::Contrib::Helpers::Breadcrumbs::Helpers
 
-  let(:breadcrumb){ Padrino::Helpers::Breadcrumb.new }
+  let(:breadcrumb){ Padrino::Contrib::Helpers::Breadcrumb.new }
   after(:each) { breadcrumb.reset! }
 
   describe "for Breadcrumbs#breadcrumbs method" do
