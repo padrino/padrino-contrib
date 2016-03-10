@@ -9,10 +9,6 @@ group :development do
   gem 'rake'
 end
 
-group :test, :development do
-  gem 'pry-debugger' unless ENV['TRAVIS']
-end
-
 group :test do
   gem 'padrino-core'
   gem 'padrino-helpers'
