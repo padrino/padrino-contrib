@@ -39,7 +39,7 @@ describe Padrino::Contrib::AutoLocale do
     it "doesn't choke when the HTTP_ACCEPT_LANGUAGE header is not present" do
       expect do
         get '/', { }, 'HTTP_ACCEPT_LANGUAGE' => nil
-      end.not_to raise_exception NoMethodError
+      end.not_to raise_error
     end
   end
 
