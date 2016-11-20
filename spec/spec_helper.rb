@@ -1,8 +1,8 @@
-PADRINO_ENV = 'test'
+RACK_ENV = 'test'
 PADRINO_ROOT = File.dirname(__FILE__) unless defined?(PADRINO_ROOT)
 require 'rubygems' unless defined?(Gem)
 require 'bundler'
-Bundler.require(:default, PADRINO_ENV)
+Bundler.require(:default, RACK_ENV)
 
 require 'padrino-contrib'
 
