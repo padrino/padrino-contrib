@@ -1,14 +1,14 @@
-PADRINO_ENV = 'test'
+RACK_ENV = 'test'
 PADRINO_ROOT = File.dirname(__FILE__) unless defined?(PADRINO_ROOT)
 require 'rubygems' unless defined?(Gem)
 require 'bundler'
-Bundler.require(:default, PADRINO_ENV)
+Bundler.require(:default, RACK_ENV)
 
+require_relative 'support/matchers/have_selector'
 require 'padrino-contrib'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
-  config.include Webrat::Matchers
 
   # Sets up a Sinatra::Base subclass defined with the block
   # given. Used in setup or individual spec methods to establish

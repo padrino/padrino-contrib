@@ -51,7 +51,7 @@ module Padrino
                     source.sub!(cr,'')
                   end
                   # Removes empty lines
-                  source.each_line.reject { |l| l.strip == "" }.join
+                  source.each_line.reject { |line| line.strip == "" }.join
                 end
                 File.open(path, "w") { |f| f.write sources.join("\n") }
                 logger.debug "JQuery Cached (%0.2fms) %s" % [Time.now-began_at, path] if defined?(logger)
