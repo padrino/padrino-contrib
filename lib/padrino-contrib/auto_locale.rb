@@ -51,8 +51,8 @@ module Padrino
           # Default to the first locale
           I18n.locale = settings.locales.first
 
-          # First check if the path starts with a known locale
-          if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
+          # First check if the path contains a known locale
+          if request.path_info =~ /\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
 
           # Then check if the path is excluded
@@ -70,7 +70,7 @@ module Padrino
               end
             end
             # Then redirect from "/" to "/:lang" to match the new routing urls
-            redirect url("/#{I18n.locale.to_s}/", false)
+            redirect url("/#{I18n.locale.to_s}/")
 
           # Return 404 not found for everything else
           else
@@ -85,7 +85,7 @@ module Padrino
           return unless route.original_path.is_a?(String)
           excluded_paths = block.binding.eval('settings').locale_exclusive_paths
           return if AutoLocale.excluded_path?(route.original_path, excluded_paths)
-          route.path = "/:lang#{route.original_path}" unless route.original_path =~ /:lang/
+          route.path = "#{ENV['RACK_BASE_URI']}/:lang#{route.original_path}" unless route.original_path =~ /:lang/
         end
 
         def self.excluded_path?(path, excluded_paths)
