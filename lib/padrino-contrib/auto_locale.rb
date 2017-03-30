@@ -52,7 +52,7 @@ module Padrino
           I18n.locale = settings.locales.first
 
           # First check if the path contains a known locale
-          if request.path_info =~ /\/(#{settings.locales.join('|')})\b/
+          if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
 
           # Then check if the path is excluded
@@ -85,7 +85,7 @@ module Padrino
           return unless route.original_path.is_a?(String)
           excluded_paths = block.binding.eval('settings').locale_exclusive_paths
           return if AutoLocale.excluded_path?(route.original_path, excluded_paths)
-          route.path = "#{ENV['RACK_BASE_URI']}/:lang#{route.original_path}" unless route.original_path =~ /:lang/
+          route.path = "/:lang#{route.original_path}" unless route.original_path =~ /:lang/
         end
 
         def self.excluded_path?(path, excluded_paths)
