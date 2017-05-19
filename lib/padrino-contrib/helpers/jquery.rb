@@ -18,18 +18,18 @@ module Padrino
             theme = options.delete(:theme) || :smoothness
             version = options.delete(:version) || '1.8.16'
 
-            stylesheet_link_tag('http://ajax.googleapis.com/ajax/libs/jqueryui/%s/themes/%s/jquery-ui.css' % [version, theme], options)
+            stylesheet_link_tag('//ajax.googleapis.com/ajax/libs/jqueryui/%s/themes/%s/jquery-ui.css' % [version, theme], options)
           end
 
           def javascript_include_tag_jquery(options={})
-            libs  = ["http://ajax.googleapis.com/ajax/libs/jquery/#{options[:version] || '1.7.1'}/jquery.min.js"]
+            libs  = ["//ajax.googleapis.com/ajax/libs/jquery/#{options[:version] || '1.7.1'}/jquery.min.js"]
 
             if options.delete(:ui)
-              libs << "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"
+              libs << "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"
             end
 
             if options.delete(:i18n)
-              libs << "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/i18n/jquery-ui-i18n.min.js"
+              libs << "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/i18n/jquery-ui-i18n.min.js"
             end
 
             if cache = options.delete(:cache)

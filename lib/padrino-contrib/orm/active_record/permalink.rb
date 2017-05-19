@@ -14,6 +14,16 @@ module Padrino
         #   end
         #
         module Permalink
+          def to_param
+            permalink
+          end
+
+          protected
+            def generate_permalink
+              self.permalink = read_attribute(self.class.permalink_field).downcase.
+                gsub(/\W/, '-').gsub(/-+/, '-').gsub(/-$/, '').gsub(/^-/, '')
+            end
+              
           module ClassMethods
             def has_permalink(field)
               include InstanceMethods
@@ -25,18 +35,6 @@ module Padrino
               @_permalink_field
             end
           end # ClassMethods
-
-          module InstanceMethods
-            def to_param
-              permalink
-            end
-
-            protected
-              def generate_permalink
-                self.permalink = read_attribute(self.class.permalink_field).downcase.
-                  gsub(/\W/, '-').gsub(/-+/, '-').gsub(/-$/, '').gsub(/^-/, '')
-              end
-          end # InstanceMethods
         end # Permalink
       end # ActiveRecord
     end # Orm

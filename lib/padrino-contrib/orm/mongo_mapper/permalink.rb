@@ -16,6 +16,15 @@ module Padrino
         module Permalink
           extend ActiveSupport::Concern
 
+          def to_param
+            permalink
+          end
+
+          protected
+            def generate_permalink
+              self.permalink = self.class.permalink_for(self[self.class.permalink_field])
+            end
+
           module ClassMethods
             def has_permalink(field)
               @_permalink_field = field
@@ -35,17 +44,6 @@ module Padrino
               @_permalink_field
             end
           end
-
-          module InstanceMethods
-            def to_param
-              permalink
-            end
-
-            protected
-              def generate_permalink
-                self.permalink = self.class.permalink_for(self[self.class.permalink_field])
-              end
-          end # InstanceMethods
         end # Permalink
       end # MongoMapper
     end # Orm
