@@ -74,7 +74,7 @@ module Padrino
         def set_home(url, caption, options = {})
           self.home = {
             :url     => url.to_s,
-            :caption => caption.to_s.humanize.html_safe,
+            :caption => caption.to_s.humanize,
             :name    => :home,
             :options => options
           }
@@ -133,7 +133,7 @@ module Padrino
           items << {
             :name    => name.to_sym,
             :url     => url.to_s,
-            :caption => caption.to_s.humanize.html_safe,
+            :caption => caption.to_s.humanize,
             :options => options
           }
         end
