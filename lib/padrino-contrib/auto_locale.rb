@@ -51,7 +51,7 @@ module Padrino
           # Default to the first locale
           I18n.locale = settings.locales.first
 
-          # First check if the path starts with a known locale
+          # First check if the path contains a known locale
           if request.path_info =~ /^\/(#{settings.locales.join('|')})\b/
             I18n.locale = $1.to_sym
 
@@ -70,7 +70,7 @@ module Padrino
               end
             end
             # Then redirect from "/" to "/:lang" to match the new routing urls
-            redirect url("/#{I18n.locale.to_s}/", false)
+            redirect url("/#{I18n.locale.to_s}/")
 
           # Return 404 not found for everything else
           else
