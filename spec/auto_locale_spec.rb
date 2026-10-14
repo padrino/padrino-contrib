@@ -130,6 +130,26 @@ describe Padrino::Contrib::AutoLocale do
     end
   end
 
+  describe 'with several applications' do
+    it 'uses the excluded paths of the application serving the request' do
+      excluding_root = mock_app {
+        register Padrino::Contrib::AutoLocale
+        set :locales, [ :en ]
+        set :locale_exclusive_paths, [ /^\/?$/ ]
+        get('/') { 'root path' }
+      }
+      localized = mock_app {
+        register Padrino::Contrib::AutoLocale
+        set :locales, [ :en ]
+      }
+
+      expect(Rack::MockRequest.new(localized).get('/')).to be_redirect
+      response = Rack::MockRequest.new(excluding_root).get('/')
+      expect(response).not_to be_redirect
+      expect(response.body).to eq 'root path'
+    end
+  end
+
   describe 'when mounted at a sub-path' do
     before :each do
       blog = mock_app {

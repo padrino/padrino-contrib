@@ -34,18 +34,13 @@ module Padrino
         app.extend ClassMethods
         app.set :locales, [:en]
         app.set :locale_exclusive_paths, []
-        @@exclusive_paths = false
         app.before do
-          # Gather excluded paths
-          unless @@exclusive_paths.is_a?(Array)
-            # auto include sinatra-assetpack configuration
-            if settings.respond_to?(:assets) and
-              settings.assets.respond_to?(:served) and
-              settings.assets.served.is_a?(Hash)
-              @@exclusive_paths = settings.locale_exclusive_paths + settings.assets.served.keys
-            else
-              @@exclusive_paths = settings.locale_exclusive_paths
-            end
+          # Gather excluded paths of this app, auto including sinatra-assetpack configuration
+          exclusive_paths = settings.locale_exclusive_paths
+          if settings.respond_to?(:assets) and
+            settings.assets.respond_to?(:served) and
+            settings.assets.served.is_a?(Hash)
+            exclusive_paths += settings.assets.served.keys
           end
 
           # Default to the first locale
@@ -56,7 +51,7 @@ module Padrino
             I18n.locale = $1.to_sym
 
           # Then check if the path is excluded
-          elsif AutoLocale.excluded_path?(request.path_info, @@exclusive_paths)
+          elsif AutoLocale.excluded_path?(request.path_info, exclusive_paths)
             next
 
           # Root path "/" needs special treatment, as it doesn't contain any language parameter.
