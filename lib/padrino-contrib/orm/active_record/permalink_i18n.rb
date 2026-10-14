@@ -35,11 +35,13 @@ module Padrino
             end
 
             def i18n_permalink_field
-              @_i18n_permalink_field
+              return @_i18n_permalink_field if defined?(@_i18n_permalink_field)
+              superclass.i18n_permalink_field if superclass.respond_to?(:i18n_permalink_field)
             end
 
             def i18n_permalink_langs
-              @_i18n_permalink_langs
+              return @_i18n_permalink_langs if defined?(@_i18n_permalink_langs)
+              superclass.i18n_permalink_langs if superclass.respond_to?(:i18n_permalink_langs)
             end
           end
 
