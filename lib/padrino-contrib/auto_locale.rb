@@ -70,7 +70,7 @@ module Padrino
               end
             end
             # Then redirect from "/" to "/:lang" to match the new routing urls
-            redirect url("/#{I18n.locale.to_s}/", false)
+            redirect url("/#{I18n.locale.to_s}/")
 
           # Return 404 not found for everything else
           else
