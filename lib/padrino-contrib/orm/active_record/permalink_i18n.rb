@@ -17,8 +17,8 @@ module Padrino
           module ClassMethods
             def has_i18n_permalink(field, options={})
               include InstanceMethods
-              @@_i18n_permalink_field = field
-              @@_i18n_permalink_langs = options.delete(:langs)
+              @_i18n_permalink_field = field
+              @_i18n_permalink_langs = options.delete(:langs)
               before_save :generate_i18n_permalinks
               i18n_permalink_langs.each do |lang|
                 validates_uniqueness_of :"#{field}_#{lang}", options
@@ -26,8 +26,7 @@ module Padrino
             end
 
             def i18n_permalink_for(name)
-              require 'iconv' unless defined?(Iconv)
-              name = Iconv.iconv('ascii//translit//IGNORE', 'utf-8', name).to_s
+              name = ActiveSupport::Inflector.transliterate(name.to_s)
               name.gsub!(/\W+/, ' ') # non-words to space
               name.strip!
               name.downcase!
@@ -36,11 +35,13 @@ module Padrino
             end
 
             def i18n_permalink_field
-              @@_i18n_permalink_field
+              return @_i18n_permalink_field if defined?(@_i18n_permalink_field)
+              superclass.i18n_permalink_field if superclass.respond_to?(:i18n_permalink_field)
             end
 
             def i18n_permalink_langs
-              @@_i18n_permalink_langs
+              return @_i18n_permalink_langs if defined?(@_i18n_permalink_langs)
+              superclass.i18n_permalink_langs if superclass.respond_to?(:i18n_permalink_langs)
             end
           end
 
@@ -51,8 +52,8 @@ module Padrino
 
             protected
               def generate_i18n_permalinks
-                singleton_class.i18n_permalink_langs.each do |lang|
-                  self.send(:"permalink_#{lang}=", singleton_class.i18n_permalink_for(read_attribute(:"#{singleton_class.i18n_permalink_field}_#{lang}")))
+                self.class.i18n_permalink_langs.each do |lang|
+                  self.send(:"permalink_#{lang}=", self.class.i18n_permalink_for(read_attribute(:"#{self.class.i18n_permalink_field}_#{lang}")))
                 end
               end
           end # InstanceMethods

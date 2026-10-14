@@ -26,11 +26,13 @@ module Padrino
             end
 
             def textile_fields
-              @_textile_fields
+              return @_textile_fields if defined?(@_textile_fields)
+              superclass.textile_fields if superclass.respond_to?(:textile_fields)
             end
 
             def textile_options
-              @_textile_options
+              return @_textile_options if defined?(@_textile_options)
+              superclass.textile_options if superclass.respond_to?(:textile_options)
             end
           end
 
@@ -44,7 +46,7 @@ module Padrino
                   html.gsub!(/\[\[([^\]]+)\]\]/) do
                     page, name = *$1.split("|") # this allow to rename link ex: [[Page Name|link me]]
                     name ||= page
-                    "<a href=\"/#{@_textile_options[:internal_links]}/#{Post.permalink_for(page.strip)}\">#{name.strip}</a>"
+                    "<a href=\"/#{self.class.textile_options[:internal_links]}/#{Post.permalink_for(page.strip)}\">#{name.strip}</a>"
                   end
                   # Write content
                   self.send("#{textile_field}_html=", html)

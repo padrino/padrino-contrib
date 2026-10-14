@@ -22,7 +22,8 @@ module Padrino
             end
 
             def permalink_field
-              @_permalink_field
+              return @_permalink_field if defined?(@_permalink_field)
+              superclass.permalink_field if superclass.respond_to?(:permalink_field)
             end
           end # ClassMethods
 
