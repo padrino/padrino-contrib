@@ -105,6 +105,7 @@ describe Padrino::Contrib::AutoLocale do
 
         get('/(:lang)?') { switch_to_lang(:en) }
         get('/unlocalized/path') { switch_to_lang(:en) }
+        get('/unlocalized/estate') { switch_to_lang(:en) }
       }
     end
 
@@ -121,6 +122,57 @@ describe Padrino::Contrib::AutoLocale do
     it 'returns the same path if the path is not localized' do
       get '/unlocalized/path'
       expect(last_response.body).to eq '/unlocalized/path'
+    end
+
+    it 'only replaces a leading locale segment' do
+      get '/unlocalized/estate'
+      expect(last_response.body).to eq '/unlocalized/estate'
+    end
+  end
+
+  describe 'when mounted at a sub-path' do
+    before :each do
+      blog = mock_app {
+        register Padrino::Contrib::AutoLocale
+        set :locales, [ :en, :de ]
+        set :uri_root, '/blog'
+
+        get(:posts) { switch_to_lang(:de) }
+      }
+      @app = Padrino::Router.new(:path => '/blog', :to => blog)
+    end
+
+    around :each do |example|
+      base_uri = ENV.delete('RACK_BASE_URI')
+      begin
+        example.run
+      ensure
+        base_uri ? ENV['RACK_BASE_URI'] = base_uri : ENV.delete('RACK_BASE_URI')
+      end
+    end
+
+    it 'redirects the root path to the localized root under the mount point' do
+      get '/blog/'
+      expect(last_response).to be_redirect
+      expect(URI(last_response.location).path).to eq '/blog/en/'
+    end
+
+    it 'redirects the root path under RACK_BASE_URI' do
+      ENV['RACK_BASE_URI'] = '/sub'
+      get '/blog/'
+      expect(last_response).to be_redirect
+      expect(URI(last_response.location).path).to eq '/sub/blog/en/'
+    end
+
+    it 'switches the lang of a localized path under the mount point' do
+      get '/blog/en/posts'
+      expect(last_response.body).to eq '/blog/de/posts'
+    end
+
+    it 'switches the lang of a localized path under RACK_BASE_URI' do
+      ENV['RACK_BASE_URI'] = '/sub'
+      get '/blog/en/posts'
+      expect(last_response.body).to eq '/sub/blog/de/posts'
     end
   end
 end

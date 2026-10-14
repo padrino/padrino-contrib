@@ -24,8 +24,8 @@ module Padrino
         #
         def switch_to_lang(lang)
           return unless settings.locales.include?(lang)
-          return url("/#{lang}", false) if request.path_info == '/'
-          url(request.path_info.sub(/\/#{I18n.locale}/, "/#{lang}"), false)
+          return url("/#{lang}") if request.path_info == '/'
+          url(request.path_info.sub(/\A\/#{I18n.locale}\b/, "/#{lang}"))
         end
       end # Helpers
 
