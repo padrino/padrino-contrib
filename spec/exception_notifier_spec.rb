@@ -20,6 +20,16 @@ describe Padrino::Contrib::ExceptionNotifier do
     Mail::TestMailer.deliveries.last
   end
 
+  def logged_report
+    @log.string
+  end
+
+  before :each do
+    @log = StringIO.new
+    log = Logger.new(@log)
+    @app.send(:define_method, :logger) { log }
+  end
+
   context 'when an exception is raised' do
     it 'sends a notification email' do
       expect { get '/boom' }.to change { Mail::TestMailer.deliveries }
@@ -61,6 +71,63 @@ describe Padrino::Contrib::ExceptionNotifier do
       @app.set :exceptions_params_filter, [ 'foo' ]
       get '/boom', :foo => 'bar'
       expect(last_email.body).to match /"foo" => \[FILTERED\]/
+    end
+
+    it 'filters params nested in hashes and arrays' do
+      get '/boom', :user => { :name => 'joe', :password => 'super_secret' },
+                   :rows => [ { :password_confirmation => 'super_secret' } ]
+      expect(last_email.body.to_s).to include '"joe"'
+      expect(last_email.body.to_s).not_to include 'super_secret'
+    end
+
+    it 'filters keys that contain a filtered word, and regexp filters' do
+      @app.set :exceptions_params_filter, [ 'password', /\Apin\z/i ]
+      get '/boom', :current_password => 'super_secret', :PIN => '1234', :pinned => 'yes'
+      expect(last_email.body.to_s).not_to include 'super_secret'
+      expect(last_email.body.to_s).not_to include '1234'
+      expect(last_email.body.to_s).to include '"yes"'
+    end
+
+    it 'filters posted form fields in the params and the env' do
+      @app.post(:boom) { 420 / 0 }
+      post '/boom', :user => { :password => 'form_secret', :name => 'joe' }
+      expect(last_email.body.to_s).not_to include 'form_secret'
+      expect(last_email.body.to_s).to include '"joe"'
+    end
+
+    it 'does not change the params seen by the application' do
+      seen = []
+      @app.get(:capture) { seen << params; 420 / 0 }
+      get '/capture', :user => { :password => 'super_secret' }
+      expect(seen.first['user']['password']).to eq 'super_secret'
+    end
+
+    it 'leaves cookies, credentials and session data out of the report' do
+      @app.enable :sessions
+      @app.set :session_secret, 'x' * 64
+      @app.get(:login) { session[:user_id] = 'session_value_42'; 'ok' }
+      @app.get(:session_boom) { session[:user_id]; 420 / 0 }
+      get '/login'
+      set_cookie 'remember_me=cookie_secret'
+      get '/session_boom', { :password => 'query_secret', :page => '2' },
+          'HTTP_AUTHORIZATION' => 'Bearer auth_secret',
+          'HTTP_X_API_TOKEN' => 'header_secret',
+          'HTTP_USER_AGENT' => 'SpecAgent/1.0'
+      [ email_body = last_email.body.to_s, logged_report ].each do |report|
+        expect(report).not_to include 'cookie_secret'
+        expect(report).not_to include 'auth_secret'
+        expect(report).not_to include 'header_secret'
+        expect(report).not_to include 'query_secret'
+        expect(report).not_to include 'session_value_42'
+        expect(report).not_to include 'x' * 64
+      end
+      expect(logged_report).to include 'PATH_INFO: /session_boom'
+      expect(email_body).to include 'REQUEST_METHOD: GET'
+      expect(email_body).to include 'PATH_INFO: /session_boom'
+      expect(email_body).to include 'HTTP_USER_AGENT: SpecAgent/1.0'
+      expect(email_body).to include 'QUERY_STRING: password=[FILTERED]&page=2'
+      expect(email_body).to include 'ZeroDivisionError - divided by 0'
+      expect(email_body).to match /exception_notifier_spec\.rb:\d+/
     end
 
     it 'renders an error page' do
