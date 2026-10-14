@@ -10,8 +10,9 @@ Gem::Specification.new do |s|
   s.summary     = "Contributed plugins and utilities for Padrino Framework"
   s.homepage    = "http://www.padrinorb.com"
   s.description = "Contributed plugins and utilities for the Padrino Ruby Web Framework"
+  s.license     = "MIT"
 
-  s.rubyforge_project = "padrino-contrib"
+  s.required_ruby_version = ">= 2.7.8"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
