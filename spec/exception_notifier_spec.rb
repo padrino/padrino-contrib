@@ -95,6 +95,13 @@ describe Padrino::Contrib::ExceptionNotifier do
       expect(last_email.body.to_s).to include '"joe"'
     end
 
+    it 'reports requests carrying bytes that are not valid UTF-8' do
+      get '/boom?%FF=1&password=super_secret', {}, 'HTTP_USER_AGENT' => "Agent\xFF".b
+      expect(last_response.status).to eq 500
+      expect(last_email.body.to_s).to include 'QUERY_STRING: %FF=1&password=[FILTERED]'
+      expect(last_email.body.to_s).not_to include 'super_secret'
+    end
+
     it 'does not change the params seen by the application' do
       seen = []
       @app.get(:capture) { seen << params; 420 / 0 }

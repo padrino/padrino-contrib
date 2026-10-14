@@ -66,11 +66,11 @@ module Padrino
       # Builds the plain text report for an exception, with params and env filtered.
       #
       def self.report(boom, env, params, filters)
-        body  = ["#{boom.class} - #{boom.message}:", *boom.backtrace].join("\n  ")
+        body  = ["#{boom.class} - #{utf8(boom.message.to_s)}:", *boom.backtrace].join("\n  ")
         body += "\n\n---Env:\n"
         env.each do |key, value|
           next unless REPORTED_ENV_TYPES.any? { |type| value.is_a?(type) }
-          body += "\n#{key}: #{filter_env(key.to_s, value, filters)}"
+          body += "\n#{key}: #{filter_env(key.to_s, value.is_a?(String) ? utf8(value) : value, filters)}"
         end
         body += "\n\n---Params:\n"
         filter_params(params, filters).each { |key, value| body += "\n#{key.inspect} => #{value.inspect}" }
@@ -94,7 +94,7 @@ module Padrino
       end
 
       def self.filtered_key?(key, filters)
-        key = key.to_s
+        key = utf8(key.to_s)
         filters.any? do |filter|
           filter.is_a?(Regexp) ? filter.match?(key) : key.downcase.include?(filter.to_s.downcase)
         end
@@ -115,13 +115,18 @@ module Padrino
           raw_name, separator, _value = pair.partition('=')
           next pair if separator.empty?
           name = begin
-            ::Rack::Utils.unescape(raw_name)
+            utf8(::Rack::Utils.unescape(raw_name))
           rescue ArgumentError
             raw_name
           end
           filtered = name.scan(/[^\[\]]+/).any? { |part| filtered_key?(part, filters) }
           filtered ? "#{raw_name}=#{FILTERED}" : pair
         end.join
+      end
+
+      # A UTF-8 copy with invalid bytes replaced, so reports never fail on request data.
+      def self.utf8(string)
+        String.new(string, :encoding => Encoding::UTF_8).scrub
       end
     end # ExceptionNotifier
   end # Contrib
