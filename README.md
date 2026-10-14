@@ -33,6 +33,12 @@ class MyApp < Padrino::Application
 end
 ```
 
+The exception notifier hides any param or env key that contains one of the words in
+`exceptions_params_filter`, ignoring case, or matches a Regexp in it. The default is
+`['passw', 'secret', 'token', '_key', 'apikey', 'crypt']`, so `passw` also covers
+`password_confirmation` and `_key` covers `api_key`; setting the option replaces the
+list. The exception message is reported as it is, so keep request data out of it.
+
 ## Removed modules
 
 These modules depended on software that is no longer maintained, or duplicated

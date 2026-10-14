@@ -11,7 +11,7 @@
 #     set :exceptions_page,    :errors # => views/errors.haml/erb
 #     set :redmine, :project => "My Bugs", :tracker => "Bugs", :priority => "High"
 #     # Params and env keys containing any of these words (or matching a Regexp) are filtered
-#     set :exceptions_params_filter, ['password', 'secret', 'token', /\Apin\z/i]
+#     set :exceptions_params_filter, ['passw', 'secret', 'token', '_key', 'apikey', 'crypt', /\Apin\z/i]
 #     # Uncomment this for test in development
 #     # disable :raise_errors
 #     # disable :show_exceptions
@@ -26,9 +26,9 @@ module Padrino
       FILTERED.freeze
 
       # Env entries that are never reported: cookies, credentials, session data and raw form bodies.
-      MASKED_ENV = /\A(?:HTTP_COOKIE|HTTP_AUTHORIZATION|HTTP_PROXY_AUTHORIZATION|rack\.session|rack\.request\.(?:cookie|form))/
+      MASKED_ENV = /\A(?:HTTP_\w*(?:COOKIE|AUTHORIZATION)|rack\.session|rack\.request\.(?:cookie|form))/
       # Env entries holding a URL or a query string, reported with filtered query values.
-      URL_ENV   = %w(REQUEST_URI ORIGINAL_FULLPATH HTTP_REFERER)
+      URL_ENV   = %w(REQUEST_URI ORIGINAL_FULLPATH HTTP_REFERER HTTP_X_ORIGINAL_URL HTTP_X_REWRITE_URL)
       QUERY_ENV = %w(QUERY_STRING rack.request.query_string)
       REPORTED_ENV_TYPES = [String, Symbol, Numeric, TrueClass, FalseClass]
 
@@ -39,7 +39,7 @@ module Padrino
         app.set :exceptions_layout,  :application unless app.respond_to?(:exceptions_layout)
         app.set :exceptions_views,   app.views unless app.respond_to?(:exceptions_views)
         app.set :redmine, {} unless app.respond_to?(:redmine)
-        app.set :exceptions_params_filter, ['password', 'password_confirmation', 'secret', 'token', 'api_key'] unless app.respond_to?(:exceptions_params_filter)
+        app.set :exceptions_params_filter, ['passw', 'secret', 'token', '_key', 'apikey', 'crypt'] unless app.respond_to?(:exceptions_params_filter)
         app.error 500 do
           boom = env['sinatra.error']
           body = ExceptionNotifier.report(boom, env, params, settings.exceptions_params_filter)

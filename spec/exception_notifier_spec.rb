@@ -118,11 +118,13 @@ describe Padrino::Contrib::ExceptionNotifier do
       set_cookie 'remember_me=cookie_secret'
       get '/session_boom', { :password => 'query_secret', :page => '2' },
           'HTTP_AUTHORIZATION' => 'Bearer auth_secret',
+          'HTTP_X_AUTHORIZATION' => 'xauth_value',
           'HTTP_X_API_TOKEN' => 'header_secret',
           'HTTP_USER_AGENT' => 'SpecAgent/1.0'
       [ email_body = last_email.body.to_s, logged_report ].each do |report|
         expect(report).not_to include 'cookie_secret'
         expect(report).not_to include 'auth_secret'
+        expect(report).not_to include 'xauth_value'
         expect(report).not_to include 'header_secret'
         expect(report).not_to include 'query_secret'
         expect(report).not_to include 'session_value_42'
@@ -135,6 +137,30 @@ describe Padrino::Contrib::ExceptionNotifier do
       expect(email_body).to include 'QUERY_STRING: password=[FILTERED]&page=2'
       expect(email_body).to include 'ZeroDivisionError - divided by 0'
       expect(email_body).to match /exception_notifier_spec\.rb:\d+/
+    end
+
+    it 'filters query values in rewritten URL headers' do
+      get '/boom', {}, 'HTTP_X_ORIGINAL_URL' => '/boom?password=original_value&page=2',
+                       'HTTP_X_REWRITE_URL' => '/boom?token=rewrite_value&page=3'
+      expect(last_email.body.to_s).to include 'HTTP_X_ORIGINAL_URL: /boom?password=[FILTERED]&page=2'
+      expect(last_email.body.to_s).to include 'HTTP_X_REWRITE_URL: /boom?token=[FILTERED]&page=3'
+      expect(last_email.body.to_s).not_to include 'original_value'
+      expect(last_email.body.to_s).not_to include 'rewrite_value'
+    end
+
+    it 'filters common variants of the default words' do
+      get '/boom', { :passwd => 'passwd_value', :api_key => 'api_key_value', :access_key => 'access_key_value',
+                     :apikey => 'apikey_value', :encrypted_data => 'crypt_value', :name => 'joe' },
+          'HTTP_X_API_KEY' => 'header_key_value',
+          'HTTP_X_REQUEST_ID' => 'request-42',
+          'HTTP_ACCEPT_LANGUAGE' => 'de-DE'
+      body = last_email.body.to_s
+      %w(passwd_value api_key_value access_key_value apikey_value crypt_value header_key_value).each do |value|
+        expect(body).not_to include value
+      end
+      expect(body).to include '"name" => "joe"'
+      expect(body).to include 'HTTP_X_REQUEST_ID: request-42'
+      expect(body).to include 'HTTP_ACCEPT_LANGUAGE: de-DE'
     end
 
     it 'renders an error page' do
