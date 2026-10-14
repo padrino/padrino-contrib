@@ -74,7 +74,7 @@ module Padrino
         def set_home(url, caption, options = {})
           self.home = {
             :url     => url.to_s,
-            :caption => caption.to_s.humanize,
+            :caption => Padrino::Inflections.humanize(caption),
             :name    => :home,
             :options => options
           }
@@ -133,7 +133,7 @@ module Padrino
           items << {
             :name    => name.to_sym,
             :url     => url.to_s,
-            :caption => caption.to_s.humanize,
+            :caption => Padrino::Inflections.humanize(caption),
             :options => options
           }
         end
@@ -200,7 +200,7 @@ module Padrino
           #  # </ul>
           #
           def breadcrumbs(breadcrumbs, bootstrap = false, active = "active", options = {})
-            content = ActiveSupport::SafeBuffer.new
+            content = ::SafeBuffer.new
             breadcrumbs.items[0..-2].each do |item|
               content << render_item(item, bootstrap)
             end
@@ -230,7 +230,7 @@ module Padrino
           # @return [String] List item with breadcrumb
           #
           def render_item(item, bootstrap)
-            content = ActiveSupport::SafeBuffer.new
+            content = ::SafeBuffer.new
             content << link_to(item[:caption], item[:url])
             content << content_tag(:span, "/", :class => "divider") if bootstrap
             content_tag(:li, content, item[:options])

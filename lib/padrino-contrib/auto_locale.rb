@@ -104,7 +104,7 @@ module Padrino
         # We need to add always a lang to all our routes
         #
         def url(*args)
-          params = args.extract_options!
+          params = args.last.is_a?(Hash) ? args.pop : {}
           params[:lang] ||= I18n.locale
           args << params
           super(*args)
