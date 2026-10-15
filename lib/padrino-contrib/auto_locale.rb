@@ -19,7 +19,9 @@ module Padrino
     #
     # A String in locale_exclusive_paths excludes that path and everything below it
     # ('/js' excludes /js and /js/app.js, not /jsfoo). With Warden, exclude its
-    # failure path ('/unauthenticated') so failed logins reach the login page.
+    # failure path ('/unauthenticated') so failed logins reach the login page, and
+    # set locale_exclusive_paths before registering Padrino::Warden: routes are
+    # localized when they're defined.
     #
     module AutoLocale
       module Helpers
