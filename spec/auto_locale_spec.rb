@@ -75,6 +75,31 @@ describe Padrino::Contrib::AutoLocale do
       end
     end
 
+    context 'when the path is the excluded path itself' do
+      before :each do
+        @app.post('/unlocalized') { 'unlocalized exact' }
+        @app.get('/unlocalizedfoo') { 'not excluded' }
+      end
+
+      it 'does not prepend :lang to the route' do
+        expect(@app.routes.map(&:path)).to include '/unlocalized'
+        expect(@app.routes.map(&:path)).not_to include '/:lang/unlocalized'
+      end
+
+      it 'lets the request through' do
+        post '/unlocalized'
+        expect(last_response).to be_ok
+        expect(last_response.body).to eq 'unlocalized exact'
+      end
+
+      it 'still localizes paths that only share the prefix' do
+        get '/unlocalizedfoo'
+        expect(last_response).to be_not_found
+        get '/en/unlocalizedfoo'
+        expect(last_response.body).to eq 'not excluded'
+      end
+    end
+
     it 'allows excluding the root path "/"' do
       @app.locale_exclusive_paths << /^\/?$/
       @app.get('/') { 'root path' }
