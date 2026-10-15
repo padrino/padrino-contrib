@@ -17,6 +17,10 @@ module Padrino
     #
     # So when we call an url like: /ru/blog/posts this extension set for you :ru as I18n.locale
     #
+    # A String in locale_exclusive_paths excludes that path and everything below it
+    # ('/js' excludes /js and /js/app.js, not /jsfoo). With Warden, exclude its
+    # failure path ('/unauthenticated') so failed logins reach the login page.
+    #
     module AutoLocale
       module Helpers
         ##
@@ -88,7 +92,8 @@ module Padrino
             if excluded_path.is_a?(Regexp)
               !!excluded_path.match(path)
             elsif excluded_path.is_a?(String)
-              path.start_with?(excluded_path.end_with?("/") ? excluded_path : "#{excluded_path}/")
+              path == excluded_path ||
+                path.start_with?(excluded_path.end_with?("/") ? excluded_path : "#{excluded_path}/")
             end
           end
         end
